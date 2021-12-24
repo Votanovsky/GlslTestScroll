@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scroll</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/58281/twgl-full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.1/TweenMax.min.js"></script>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <!-- vertex shader -->
+    <script id="2d-vertex-shader" type="x-shader/x-vertex">
+      precision mediump float;
+      
+      // where the current position and uv mapping is
+      attribute vec3 position;
+      attribute vec2 texcoord;
+      
+      // Matrix transforms we pass in?
+      uniform mat4 uMatrix;
+      uniform mat4 uTmatrix;
+      
+      uniform float uTime;
+      uniform vec2 uRes;
+  
+      uniform vec2 uOffset;
+      uniform float uPower;
+      
+      varying vec2 vTexcoord;
+      
+      void main() {
+        vec3 pos = position.xzy;
+        float rippleEffect = cos(pos.x * uPower + 1.5) / 2.0;
+        float rippleEffect2 = cos(pos.y * uPower / 1.0) / 10.0;
+        // pos.x += rippleEffect / 20.0;
+        pos.y += rippleEffect / 20.0;
+        pos.x += rippleEffect2 / 5.0;
+        
+        gl_Position = uMatrix * vec4(pos, 1.0);
+        vTexcoord = texcoord;
+      }
+    </script>
+    <!-- fragment shader -->
+    <script id="2d-fragment-shader" type="x-shader/x-fragment">
+      precision mediump float;
+  
+      uniform sampler2D uTex;
+      uniform float uProgress;
+  
+      varying vec2 vTexcoord;
+      
+      void main() {
+        
+        gl_FragColor = texture2D(uTex, vTexcoord);
+      }
+   </script>
+   <script src="index.js"></script>
+</body>
+</html>
